@@ -46,6 +46,7 @@ const nextConfig = {
 	eslint: {
 		ignoreDuringBuilds: true,
 	},
+	output: "standalone",
 };
 
 module.exports = withContentCollections(withNextIntl(nextConfig));
