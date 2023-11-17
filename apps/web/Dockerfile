@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 node:18-alpine AS base
+FROM node:18-alpine AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
@@ -54,5 +54,7 @@ USER nextjs
 EXPOSE 3000
 
 ENV PORT 3000
+# set hostname to localhost
+ENV HOSTNAME "0.0.0.0"
 
 CMD ["node", "apps/web/server.js"]
