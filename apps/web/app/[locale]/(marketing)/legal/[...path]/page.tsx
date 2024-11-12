@@ -1,61 +1,57 @@
-import { PostContent } from "@marketing/blog/components/PostContent";
-import {
-	getActivePathFromUrlParam,
-	getLocalizedDocumentWithFallback,
-} from "@shared/lib/content";
-import { allLegalPages } from "content-collections";
+import { getLocale } from "next-intl/server";
+import { MDXRemote } from 'next-mdx-remote';
+import { serialize } from 'next-mdx-remote/serialize';
 import { redirect } from "next/navigation";
+import { getActivePathFromUrlParam } from "@shared/lib/content";
 
-type Params = {
+// 定义法律文档类型
+type LegalDoc = {
 	path: string;
 	locale: string;
+	title: string;
+	body: string;
 };
 
-export async function generateMetadata({
+// 示例法律文档数据
+const legalDocs: LegalDoc[] = [
+	{
+		path: 'privacy',
+		locale: 'en',
+		title: 'Privacy Policy',
+		body: '# Privacy Policy\n\nThis is our privacy policy...'
+	},
+	{
+		path: 'terms',
+		locale: 'en',
+		title: 'Terms of Service',
+		body: '# Terms of Service\n\nThese are our terms...'
+	}
+];
+
+export default async function LegalPage({
 	params: { path, locale },
 }: {
-	params: Params;
+	params: { path: string[]; locale: string };
 }) {
 	const activePath = getActivePathFromUrlParam(path);
-	const page = getLocalizedDocumentWithFallback(
-		allLegalPages,
-		activePath,
-		locale,
+	const currentLocale = await getLocale();
+
+	const doc = legalDocs.find(
+		(doc) => doc.path === activePath && doc.locale === currentLocale
 	);
 
-	return {
-		title: page?.title,
-		openGraph: {
-			title: page?.title,
-		},
-	};
-}
-
-export default async function BlogPostPage({
-	params: { path, locale },
-}: {
-	params: Params;
-}) {
-	const activePath = getActivePathFromUrlParam(path);
-	const page = getLocalizedDocumentWithFallback(
-		allLegalPages,
-		activePath,
-		locale,
-	);
-
-	if (!page) {
+	if (!doc) {
 		redirect("/");
 	}
 
-	const { title, body } = page;
+	const mdxSource = await serialize(doc.body);
 
 	return (
-		<div className="container max-w-6xl pt-32 pb-24">
-			<div className="mx-auto mb-12 max-w-2xl">
-				<h1 className="text-center font-bold text-4xl">{title}</h1>
+		<div className="container max-w-4xl py-32">
+			<h1 className="mb-8 text-4xl font-bold">{doc.title}</h1>
+			<div className="prose dark:prose-invert">
+				<MDXRemote {...mdxSource} />
 			</div>
-
-			<PostContent content={body} />
 		</div>
 	);
 }

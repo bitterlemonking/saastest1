@@ -125,8 +125,9 @@ export function getContentStructure({
 	return contentStructure;
 }
 
-export function getActivePathFromUrlParam(path: string | string[]) {
-	return Array.isArray(path) ? path.join("/") : path || "";
+export function getActivePathFromUrlParam(path: string | string[]): string {
+	if (!path) return '';
+	return Array.isArray(path) ? path.join('/') : path;
 }
 
 export function getLocalizedDocumentWithFallback<

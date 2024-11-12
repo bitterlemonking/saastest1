@@ -1,32 +1,27 @@
-import { ContentMenu } from "@marketing/shared/components/ContentMenu";
-import { getContentStructure } from "@shared/lib/content";
-import {
-	allDocumentationMetas,
-	allDocumentationPages,
-} from "content-collections";
 import { getLocale } from "next-intl/server";
-import type { PropsWithChildren } from "react";
+import { allDocumentationPages } from "@/modules/marketing/data/docs";
+import { getContentStructure } from "@shared/lib/content";
 
 export default async function DocsLayout({
 	children,
-	params: { path },
-}: PropsWithChildren<{ params: { path: string | string[] } }>) {
+}: {
+	children: React.ReactNode;
+}) {
 	const locale = await getLocale();
-
-	const activePath = Array.isArray(path) ? path.join("/") : path || "";
 
 	const contentStructure = getContentStructure({
 		documents: allDocumentationPages,
-		meta: allDocumentationMetas,
+		meta: [], // 如果需要，可以添加元数据
 		locale,
 	});
 
 	return (
-		<div className="container pt-32 pb-24">
-			<div className="grid grid-cols-1 gap-8 md:grid-cols-[200px_auto]">
-				<ContentMenu items={contentStructure} activePath={activePath} />
-
-				<div>{children}</div>
+		<div className="container max-w-6xl py-32">
+			<div className="flex flex-col gap-8 lg:flex-row">
+				<div className="w-full lg:w-64">
+					{/* 添加您的文档导航组件 */}
+				</div>
+				<div className="flex-1">{children}</div>
 			</div>
 		</div>
 	);

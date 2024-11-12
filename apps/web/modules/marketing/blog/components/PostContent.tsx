@@ -1,17 +1,11 @@
 "use client";
 
-import { MDXContent } from "@content-collections/mdx/react";
-import { mdxComponents } from "../utils/mdx-components";
+import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';
 
-export function PostContent({ content }: { content: string }) {
+export function PostContent({ content }: { content: MDXRemoteSerializeResult }) {
 	return (
 		<div className="prose dark:prose-invert mx-auto mt-6 max-w-2xl">
-			<MDXContent
-				code={content}
-				components={{
-					a: mdxComponents.a,
-				}}
-			/>
+			<MDXRemote {...content} />
 		</div>
 	);
 }

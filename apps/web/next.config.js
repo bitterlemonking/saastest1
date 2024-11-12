@@ -1,4 +1,3 @@
-const { withContentCollections } = require("@content-collections/next");
 const nextIntlPlugin = require("next-intl/plugin");
 
 const withNextIntl = nextIntlPlugin("./i18n.ts");
@@ -9,12 +8,10 @@ const nextConfig = {
 	images: {
 		remotePatterns: [
 			{
-				// google profile images
 				protocol: "https",
 				hostname: "lh3.googleusercontent.com",
 			},
 			{
-				// github profile images
 				protocol: "https",
 				hostname: "avatars.githubusercontent.com",
 			},
@@ -37,6 +34,11 @@ const nextConfig = {
 				destination: "/app/admin/users",
 				permanent: true,
 			},
+			{
+				source: "/docs",
+				destination: "/docs-list",
+				permanent: true,
+			}
 		];
 	},
 	webpack: (config) => {
@@ -47,6 +49,10 @@ const nextConfig = {
 		ignoreDuringBuilds: true,
 	},
 	output: "standalone",
+	experimental: {
+		typedRoutes: true
+	},
+	pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
 };
 
-module.exports = withContentCollections(withNextIntl(nextConfig));
+module.exports = withNextIntl(nextConfig);

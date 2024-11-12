@@ -1,13 +1,14 @@
 import { Link } from "@i18n";
 import { PostContent } from "@marketing/blog/components/PostContent";
 import { getActivePathFromUrlParam } from "@shared/lib/content";
-import { allPosts } from "content-collections";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import { getBaseUrl } from "utils";
+import { serialize } from 'next-mdx-remote/serialize';
+import { allPosts, type Post } from '@/modules/marketing/data/posts';
 
 type Params = {
-	path: string;
+	path: string[];
 	locale: string;
 };
 
@@ -18,7 +19,7 @@ export async function generateMetadata({
 }) {
 	const activePath = getActivePathFromUrlParam(path);
 	const post = allPosts.find(
-		(post) => post.path === activePath && locale === post.locale,
+		(p: Post) => p.path === activePath && locale === p.locale,
 	);
 
 	return {
@@ -41,7 +42,7 @@ export default async function BlogPostPage({
 }) {
 	const activePath = getActivePathFromUrlParam(path);
 	const post = allPosts.find(
-		(post) => post.path === activePath && locale === post.locale,
+		(p: Post) => p.path === activePath && locale === p.locale,
 	);
 
 	if (!post) {
@@ -49,6 +50,7 @@ export default async function BlogPostPage({
 	}
 
 	const { title, date, authorName, authorImage, tags, image, body } = post;
+	const mdxSource = await serialize(body);
 
 	return (
 		<div className="container max-w-6xl pt-32 pb-24">
@@ -87,12 +89,12 @@ export default async function BlogPostPage({
 
 					{tags && (
 						<div className="flex flex-1 flex-wrap gap-2">
-							{tags.map((tag) => (
+							{tags.map((tag: string) => (
 								<span
 									key={tag}
 									className="font-semibold text-primary text-xs uppercase tracking-wider"
 								>
-									#{tag}
+									{tag}
 								</span>
 							))}
 						</div>
@@ -113,7 +115,7 @@ export default async function BlogPostPage({
 			)}
 
 			<div className="pb-8">
-				<PostContent content={body} />
+				<PostContent content={mdxSource} />
 			</div>
 		</div>
 	);

@@ -1,0 +1,10 @@
+{
+  "admin": {},
+  "auth": {},
+  "docs": {
+    "title": "Documentation",
+    "description": "Learn how to use our platform",
+    "back": "Back to documentation"
+  },
+  "blog": {}
+} 
